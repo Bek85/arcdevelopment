@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
@@ -26,10 +26,16 @@ function ElevationScroll(props) {
 const useStyles = makeStyles((theme) => ({
   toolbarMargin: {
     ...theme.mixins.toolbar,
-    marginBottom: '1.5em',
+    marginBottom: '3em',
   },
   logo: {
-    height: '100%',
+    height: '8em',
+  },
+  logoContainer: {
+    padding: 0,
+    '&:hover': {
+      backgroundColor: 'transparent',
+    },
   },
   tabContainer: {
     marginLeft: 'auto',
@@ -53,12 +59,33 @@ export default function Header(props) {
 
   const handleChange = (evt, newValue) => setValue(newValue);
 
+  useEffect(() => {
+    if (window.location.pathname === '/' && value !== 0) setValue(0);
+    else if (window.location.pathname === '/services' && value !== 1)
+      setValue(1);
+    else if (window.location.pathname === '/revolution' && value !== 2)
+      setValue(2);
+    else if (window.location.pathname === '/about' && value !== 3) setValue(3);
+    else if (window.location.pathname === '/contact' && value !== 4)
+      setValue(4);
+    else if (window.location.pathname === '/estimate' && value !== 5)
+      setValue(5);
+  }, [value]);
+
   return (
     <React.Fragment>
       <ElevationScroll>
         <AppBar position='fixed' color='primary'>
           <Toolbar disableGutters>
-            <img className={classes.logo} src={logo} alt='company logo' />
+            <Button
+              onClick={() => setValue(0)}
+              component={Link}
+              to='/'
+              disableRipple
+              className={classes.logoContainer}
+            >
+              <img className={classes.logo} src={logo} alt='company logo' />
+            </Button>
             <Tabs
               value={value}
               onChange={handleChange}
