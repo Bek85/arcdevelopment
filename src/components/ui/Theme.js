@@ -16,4 +16,9 @@ export const theme = createMuiTheme({
       main: `${arcOrange}`,
     },
   },
+  typography: {
+    h3: {
+      fontWeight: 300,
+    },
+  },
 });
