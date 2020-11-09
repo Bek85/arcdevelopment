@@ -11,6 +11,9 @@ import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import useMediaQuery from '@material-ui/core/useMediaQuery';
 import { useTheme } from '@material-ui/core/styles';
+import SwipeableDrawer from '@material-ui/core/SwipeableDrawer';
+import MenuIcon from '@material-ui/icons/Menu';
+import IconButton from '@material-ui/core/IconButton';
 
 import logo from '../../assets/logo.svg';
 
@@ -83,32 +86,44 @@ const useStyles = makeStyles((theme) => ({
       opacity: 1,
     },
   },
+  drawerIcon: {
+    height: '50px',
+    width: '50px',
+  },
+  drawerIconContainer: {
+    marginLeft: 'auto',
+    '&:hover': {
+      backgroundColor: 'transparent',
+    },
+  },
 }));
 
 export default function Header(props) {
   const classes = useStyles();
   const theme = useTheme();
   const matches = useMediaQuery(theme.breakpoints.down('md'));
+  const iOS = process.browser && /iPad|iPhone|iPod/.test(navigator.userAgent);
+  const [openDrawer, setOpenDrawer] = useState(false);
   const [value, setValue] = useState(0);
   const [anchorEl, setAnchorEl] = useState(null);
-  const [open, setOpen] = useState(false);
+  const [openMenu, setOpenMenu] = useState(false);
   const [selectedIndex, setSelectedIndex] = useState(0);
 
   const handleChange = (evt, newValue) => setValue(newValue);
 
   const handleClick = (evt) => {
     setAnchorEl(evt.currentTarget);
-    setOpen(true);
+    setOpenMenu(true);
   };
 
   const handleClose = (evt) => {
     setAnchorEl(null);
-    setOpen(false);
+    setOpenMenu(false);
   };
 
   const handleMenuItemClick = (e, i) => {
     setAnchorEl(null);
-    setOpen(false);
+    setOpenMenu(false);
     setSelectedIndex(i);
   };
 
@@ -168,7 +183,7 @@ export default function Header(props) {
       <Menu
         id='simple-menu'
         anchorEl={anchorEl}
-        open={open}
+        open={openMenu}
         onClose={handleClose}
         MenuListProps={{ onMouseLeave: handleClose }}
         classes={{ paper: classes.menu }}
@@ -238,6 +253,27 @@ export default function Header(props) {
     }
   }, [value]);
 
+  const drawer = (
+    <React.Fragment>
+      <SwipeableDrawer
+        open={openDrawer}
+        onClose={() => setOpenDrawer(false)}
+        onOpen={() => setOpenDrawer(true)}
+        disableBackdropTransition={!iOS}
+        disableDiscovery={iOS}
+      >
+        Example Drawer
+      </SwipeableDrawer>
+      <IconButton
+        className={classes.drawerIconContainer}
+        disableRipple
+        onClick={() => setOpenDrawer(!openDrawer)}
+      >
+        <MenuIcon className={classes.drawerIcon} />
+      </IconButton>
+    </React.Fragment>
+  );
+
   return (
     <React.Fragment>
       <ElevationScroll>
@@ -252,7 +288,7 @@ export default function Header(props) {
             >
               <img className={classes.logo} src={logo} alt='company logo' />
             </Button>
-            {matches ? null : tabs}
+            {matches ? drawer : tabs}
           </Toolbar>
         </AppBar>
       </ElevationScroll>
